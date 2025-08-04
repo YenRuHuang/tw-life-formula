@@ -114,14 +114,49 @@ tw-life-formula/
 - 實作分手成本計算邏輯
 - 建立震撼性結果生成系統
 
-## 🔧 開發環境設定
+## � **Zeabur 雲端部署狀態**
 
-### 啟動專案
+### 部署資訊
+- **部署平台**: Zeabur
+- **網站 URL**: https://twlifeformula.zeabur.app
+- **部署狀態**: ✅ 成功運行
+- **環境**: 生產環境 (NODE_ENV=production)
+- **自動部署**: ✅ 已設定 (git push 觸發)
+
+### 部署優勢
+- ✅ **端口衝突解決**: 智能端口管理系統
+- ✅ **線上開發環境**: 隨時可訪問測試
+- ✅ **自動部署流程**: 代碼推送即更新
+- ✅ **穩定運行**: 24/7 可用性
+- ✅ **HTTPS 支援**: 安全連線
+
+### 重要更新
+- ✅ **智能端口管理**: 本地開發自動尋找可用端口
+- ✅ **Hostinger 自動部署**: 已停用，改為手動觸發
+- ✅ **安全密鑰**: 已生成強加密 SESSION_SECRET 和 JWT_SECRET
+- ✅ **CORS 配置**: 已更新支援 Zeabur 域名
+
+## �🔧 開發環境設定
+
+### 線上環境 (推薦)
+```bash
+# 直接使用 Zeabur 線上環境
+# URL: https://twlifeformula.zeabur.app
+# 健康檢查: https://twlifeformula.zeabur.app/health
+# API: https://twlifeformula.zeabur.app/api/tools
+```
+
+### 本地開發環境
 ```bash
 npm install
 npm run db:test    # 測試資料庫連接
-npm run dev        # 啟動開發伺服器
+npm run dev        # 啟動開發伺服器 (智能端口管理)
 ```
+
+### 智能端口管理
+- **自動檢測**: 如果 3001 被佔用，自動使用 3002, 3003...
+- **生產環境**: 固定使用 3001 端口
+- **智能提示**: 建議更新 .env 配置
 
 ### 資料庫操作
 ```bash
@@ -145,6 +180,9 @@ npm run lint:fix   # 自動修正
 - ✅ 工具配置載入成功
 - ✅ 用戶管理系統就緒
 - ✅ 前端界面基本完成
+- ✅ **Zeabur 雲端部署成功**
+- ✅ **智能端口管理系統**
+- ✅ **自動部署流程建立**
 
 ### 測試結果
 - ✅ 資料庫連接測試通過
@@ -152,24 +190,45 @@ npm run lint:fix   # 自動修正
 - ✅ 權限檢查通過
 - ✅ 8個工具配置已載入
 - ✅ 3個測試用戶已建立
+- ✅ **線上環境健康檢查通過**
+- ✅ **API 端點正常運作**
+
+### 部署驗證
+- ✅ 主頁: https://twlifeformula.zeabur.app
+- ✅ 健康檢查: https://twlifeformula.zeabur.app/health
+- ✅ 工具 API: https://twlifeformula.zeabur.app/api/tools
+- ✅ 用戶 API: https://twlifeformula.zeabur.app/api/users
+- ✅ 管理 API: https://twlifeformula.zeabur.app/api/admin
 
 ## 🎯 Claude Code 接手重點
 
 1. **專案已就緒**: 資料庫連接成功，基礎架構完整
-2. **下一個任務**: 實作核心工具管理系統 (任務3)
-3. **重要文件**: `.kiro/specs/tw-life-formula/tasks.md`
-4. **資料庫**: 已連接且正常運作
-5. **GitHub**: 所有進度已推送
+2. **雲端部署完成**: Zeabur 線上環境運行正常
+3. **下一個任務**: 實作核心工具管理系統 (任務3)
+4. **重要文件**: `.kiro/specs/tw-life-formula/tasks.md`
+5. **資料庫**: 已連接且正常運作
+6. **GitHub**: 所有進度已推送
+7. **端口衝突問題**: 已徹底解決
 
 ## 💡 重要提醒
 
-- 資料庫連接資訊在 `.env` 文件中
-- 所有 Spec 文件在 `.kiro/specs/tw-life-formula/` 目錄
-- 任務清單在 `tasks.md` 中，任務1和2已完成
-- 可以直接開始任務3的開發工作
+- **線上環境**: https://twlifeformula.zeabur.app (主要開發環境)
+- **本地開發**: 智能端口管理，永不衝突
+- **資料庫連接**: 資訊在 `.env` 文件中
+- **Spec 文件**: `.kiro/specs/tw-life-formula/` 目錄
+- **任務狀態**: 任務1和2已完成，準備開始任務3
+- **部署指引**: `ZEABUR_DEPLOYMENT_GUIDE.md`
+
+## 🔄 開發流程
+
+1. **修改代碼** (本地或線上)
+2. **git push origin main** (自動觸發部署)
+3. **Zeabur 自動更新** (約1-2分鐘)
+4. **線上測試** https://twlifeformula.zeabur.app
 
 ---
 
-**交接時間**: 2025-08-05
+**最後更新**: 2025-08-05 06:00
 **GitHub Repository**: https://github.com/YenRuHuang/tw-life-formula
-**狀態**: 資料庫連接成功，準備開始核心功能開發
+**線上環境**: https://twlifeformula.zeabur.app
+**狀態**: ✅ Zeabur 部署成功，端口衝突已解決，準備開始任務3核心功能開發
