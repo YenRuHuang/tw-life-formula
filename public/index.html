@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>台灣人生算式 - 用數學解析台灣人的真實人生</title>
+    <meta name="description" content="專為台灣人設計的生活計算平台，提供月光族指數、泡麵生存天數等有趣計算工具">
+    <meta name="keywords" content="台灣,生活計算,月光族,泡麵,分手成本,計算機">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="台灣人生算式 - 用數學解析台灣人的真實人生">
+    <meta property="og:description" content="專為台灣人設計的生活計算平台，提供月光族指數、泡麵生存天數等有趣計算工具">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://twlifeformula.com">
+
+    <!-- 樣式 -->
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- 頁首 -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <h1 class="logo">🧮 台灣人生算式</h1>
+                <p class="tagline">用數學解析台灣人的真實人生</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主要內容 -->
+    <main class="main">
+        <div class="container">
+            <!-- 工具網格 -->
+            <section class="tools-section">
+                <h2 class="section-title">選擇你的人生算式</h2>
+                <div class="tools-grid" id="toolsGrid">
+                    <!-- 工具卡片將由 JavaScript 動態載入 -->
+                </div>
+            </section>
+
+            <!-- 廣告位置 -->
+            <div class="ad-container" id="ad-top">
+                <!-- Google AdSense 廣告將在這裡顯示 -->
+            </div>
+        </div>
+    </main>
+
+    <!-- 頁尾 -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <p>&copy; 2024 台灣人生算式. All rights reserved.</p>
+                <div class="footer-links">
+                    <a href="/privacy">隱私權政策</a>
+                    <a href="/terms">使用條款</a>
+                    <a href="/contact">聯絡我們</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 載入提示 -->
+    <div class="loading" id="loading">
+        <div class="loading-spinner"></div>
+        <p>正在計算你的人生...</p>
+    </div>
+
+    <!-- 結果模態框 -->
+    <div class="modal" id="resultModal">
+        <div class="modal-content">
+            <span class="close" id="closeModal">&times;</span>
+            <div class="result-content" id="resultContent">
+                <!-- 結果內容將由 JavaScript 動態載入 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="/js/main.js"></script>
+</body>
+</html>
