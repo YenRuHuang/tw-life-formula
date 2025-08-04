@@ -146,13 +146,42 @@ function getMockInputData(toolId) {
     case 'noodle-survival':
       return {
         savings: 10000,
-        monthlyExpenses: 30000
+        monthly_expenses: 30000
       };
     case 'breakup-cost':
       return {
-        relationshipMonths: 24,
-        monthlySpending: 8000,
-        sharedAssets: 50000
+        relationship_months: 24,
+        monthly_spending: 8000,
+        shared_assets: 50000
+      };
+    case 'phone-lifespan':
+      return {
+        phone_age_months: 12,
+        daily_usage_hours: 8,
+        phone_brand: 'iPhone'
+      };
+    case 'housing-index':
+      return {
+        living_space: 25,
+        rent_price: 20000,
+        city: '台北市'
+      };
+    case 'escape-taipei':
+      return {
+        current_salary: 50000,
+        target_city: '台中市',
+        lifestyle_level: 'comfortable'
+      };
+    case 'car-vs-uber':
+      return {
+        car_price: 800000,
+        monthly_fuel: 5000,
+        monthly_trips: 30
+      };
+    case 'birthday-collision':
+      return {
+        birth_month: 6,
+        birth_day: 15
       };
     default:
       return {};
@@ -169,25 +198,37 @@ function showResult(tool, result) {
     return;
   }
 
-  resultContent.innerHTML = `
-        <h2>${tool.name}</h2>
-        <div class="result-value">${result.result.value}%</div>
-        <div class="result-message">${result.result.message}</div>
+  // 適配新的 ToolManager 結果格式
+  const displayValue = result.result.value !== null ? result.result.value : 'N/A';
+  const displayMessage = result.result.description || result.result.message || '計算完成';
+  const suggestions = result.result.suggestions || [];
 
+  resultContent.innerHTML = `
+        <h2>${result.toolName || tool.name}</h2>
+        <div class="result-value">${displayValue}${result.result.unit || ''}</div>
+        <div class="result-level">${result.result.level || ''}</div>
+        <div class="result-message">${displayMessage}</div>
+
+        ${suggestions.length > 0 ? `
         <div class="result-suggestions">
             <h3>💡 改善建議</h3>
             <ul>
-                ${result.result.suggestions.map(suggestion => `<li>${suggestion}</li>`).join('')}
+                ${suggestions.map(suggestion => `<li>${suggestion}</li>`).join('')}
             </ul>
         </div>
+        ` : ''}
 
         <div class="share-buttons">
-            <button class="share-btn facebook" onclick="shareToFacebook('${tool.name}', '${result.result.message}')">
+            <button class="share-btn facebook" onclick="shareToFacebook('${result.toolName || tool.name}', '${displayMessage}')">
                 分享到 Facebook
             </button>
-            <button class="share-btn line" onclick="shareToLine('${tool.name}', '${result.result.message}')">
+            <button class="share-btn line" onclick="shareToLine('${result.toolName || tool.name}', '${displayMessage}')">
                 分享到 LINE
             </button>
+        </div>
+
+        <div class="usage-info">
+            <small>剩餘使用次數: ${result.usage.remaining === -1 ? '無限制' : result.usage.remaining}</small>
         </div>
     `;
 
