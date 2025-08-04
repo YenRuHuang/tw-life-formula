@@ -6,29 +6,32 @@
 }
 
 :root {
-    /* 現代化多彩色系 - 仿照 OOOPEN */
-    --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    --gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-    --gradient-accent: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    /* Dark Mode 多彩色系 - 增強對比度 */
+    --gradient-primary: linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%);
+    --gradient-secondary: linear-gradient(135deg, #ec4899 0%, #f59e0b 100%);
+    --gradient-accent: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
     
-    /* 工具卡片漸層 */
-    --card-gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #f5576c 75%, #4facfe 100%);
-    --card-gradient-2: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
-    --card-gradient-3: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
-    --card-gradient-4: linear-gradient(135deg, #d299c2 0%, #fef9d7 100%);
+    /* Dark Mode 工具卡片漸層 */
+    --card-gradient-1: linear-gradient(135deg, #8b5cf6 0%, #a855f7 25%, #ec4899 50%, #f59e0b 75%, #06b6d4 100%);
+    --card-gradient-2: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+    --card-gradient-3: linear-gradient(135deg, #312e81 0%, #1e1b4b 100%);
+    --card-gradient-4: linear-gradient(135deg, #7c2d12 0%, #92400e 100%);
     
-    /* 基礎色彩 */
-    --text-primary: #2d3748;
-    --text-secondary: #4a5568;
-    --text-light: #718096;
-    --bg-primary: #f7fafc;
+    /* Dark Mode 基礎色彩 */
+    --text-primary: #f8fafc;
+    --text-secondary: #cbd5e1;
+    --text-light: #94a3b8;
+    --bg-primary: #0f172a;
+    --bg-secondary: #1e293b;
     --white: #ffffff;
+    --card-bg: #1e293b;
+    --card-border: #334155;
     
-    /* 現代化陰影系統 */
-    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
-    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.12);
-    --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.16);
-    --shadow-xl: 0 12px 48px rgba(0, 0, 0, 0.20);
+    /* Dark Mode 陰影系統 */
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
+    --shadow-xl: 0 12px 48px rgba(0, 0, 0, 0.6);
     
     /* 現代化圓角和過渡 */
     --radius-sm: 8px;
@@ -98,7 +101,7 @@ body {
 /* 主要內容區域 */
 .main {
     padding: 4rem 0;
-    background: linear-gradient(180deg, var(--bg-primary) 0%, #ffffff 100%);
+    background: linear-gradient(180deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
 }
 
 .section-title {
@@ -130,15 +133,15 @@ body {
     margin-bottom: 4rem;
 }
 
-/* 現代化工具卡片 - 重點改進 */
+/* 現代化工具卡片 - Dark Mode */
 .tool-card {
-    background: var(--white);
+    background: var(--card-bg);
     border-radius: var(--radius-lg);
     padding: 2.5rem;
     box-shadow: var(--shadow-md);
     transition: var(--transition);
     cursor: pointer;
-    border: 1px solid rgba(255, 255, 255, 0.8);
+    border: 1px solid var(--card-border);
     position: relative;
     overflow: hidden;
 }
@@ -183,11 +186,12 @@ body {
     background: linear-gradient(135deg, #d299c2 0%, #fef9d7 100%);
 }
 
-/* 卡片 hover 效果 */
+/* 卡片 hover 效果 - Dark Mode */
 .tool-card:hover {
     transform: translateY(-8px) scale(1.02);
     box-shadow: var(--shadow-xl);
-    border-color: rgba(102, 126, 234, 0.3);
+    border-color: rgba(139, 92, 246, 0.5);
+    background: linear-gradient(135deg, var(--card-bg) 0%, rgba(139, 92, 246, 0.1) 100%);
 }
 
 .tool-card:hover::before {
@@ -219,29 +223,29 @@ body {
     font-weight: 400;
 }
 
-/* 現代化廣告容器 */
+/* 現代化廣告容器 - Dark Mode */
 .ad-container {
     margin: 3rem 0;
     text-align: center;
     min-height: 120px;
-    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    background: linear-gradient(135deg, var(--bg-secondary) 0%, rgba(139, 92, 246, 0.1) 100%);
     border-radius: var(--radius-md);
     display: flex;
     align-items: center;
     justify-content: center;
     color: var(--text-light);
     font-weight: 500;
-    border: 1px solid rgba(255, 255, 255, 0.8);
+    border: 1px solid var(--card-border);
 }
 
-/* 現代化載入動畫 */
+/* 現代化載入動畫 - Dark Mode */
 .loading {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(45, 55, 72, 0.95);
+    background: rgba(15, 23, 42, 0.95);
     backdrop-filter: blur(8px);
     display: none;
     align-items: center;
@@ -271,7 +275,7 @@ body {
     100% { transform: rotate(360deg); }
 }
 
-/* 現代化模態框 */
+/* 現代化模態框 - Dark Mode */
 .modal {
     display: none;
     position: fixed;
@@ -280,12 +284,12 @@ body {
     top: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(45, 55, 72, 0.9);
+    background-color: rgba(15, 23, 42, 0.9);
     backdrop-filter: blur(12px);
 }
 
 .modal-content {
-    background: var(--white);
+    background: var(--card-bg);
     margin: 5% auto;
     padding: 3rem;
     border-radius: var(--radius-lg);
@@ -295,7 +299,7 @@ body {
     max-height: 80vh;
     overflow-y: auto;
     box-shadow: var(--shadow-xl);
-    border: 1px solid rgba(255, 255, 255, 0.9);
+    border: 1px solid var(--card-border);
 }
 
 .close {
@@ -350,8 +354,9 @@ body {
     text-align: left;
     margin: 3rem 0;
     padding: 2rem;
-    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    background: linear-gradient(135deg, var(--bg-secondary) 0%, rgba(139, 92, 246, 0.1) 100%);
     border-radius: var(--radius-md);
+    border: 1px solid var(--card-border);
 }
 
 .result-suggestions h3 {
@@ -418,12 +423,13 @@ body {
     box-shadow: var(--shadow-lg);
 }
 
-/* 現代化頁尾 */
+/* 現代化頁尾 - Dark Mode */
 .footer {
-    background: linear-gradient(135deg, var(--text-primary) 0%, #1a202c 100%);
+    background: linear-gradient(135deg, #020617 0%, #0f172a 100%);
     color: var(--white);
     padding: 3rem 0;
     text-align: center;
+    border-top: 1px solid var(--card-border);
 }
 
 .footer-content {
