@@ -54,9 +54,9 @@ body {
     padding: 0 24px;
 }
 
-/* 現代化頁首 - 多彩漸層背景 */
+/* 現代化頁首 - 優雅深色漸層背景 */
 .header {
-    background: var(--card-gradient-1);
+    background: linear-gradient(135deg, #1e293b 0%, #334155 50%, #475569 100%);
     color: var(--white);
     padding: 4rem 0;
     text-align: center;
