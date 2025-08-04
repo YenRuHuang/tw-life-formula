@@ -6,32 +6,32 @@
 }
 
 :root {
-    /* Dark Mode 多彩色系 - 增強對比度 */
-    --gradient-primary: linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%);
-    --gradient-secondary: linear-gradient(135deg, #ec4899 0%, #f59e0b 100%);
-    --gradient-accent: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+    /* 莫蘭迪色系 - 柔和優雅 */
+    --gradient-primary: linear-gradient(135deg, #a8a5a0 0%, #b8b5b0 100%);
+    --gradient-secondary: linear-gradient(135deg, #c4a484 0%, #d4b494 100%);
+    --gradient-accent: linear-gradient(135deg, #9db4a6 0%, #adc4b6 100%);
     
-    /* Dark Mode 工具卡片漸層 */
-    --card-gradient-1: linear-gradient(135deg, #8b5cf6 0%, #a855f7 25%, #ec4899 50%, #f59e0b 75%, #06b6d4 100%);
-    --card-gradient-2: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-    --card-gradient-3: linear-gradient(135deg, #312e81 0%, #1e1b4b 100%);
-    --card-gradient-4: linear-gradient(135deg, #7c2d12 0%, #92400e 100%);
+    /* 莫蘭迪工具卡片漸層 */
+    --card-gradient-1: linear-gradient(135deg, #a8a5a0 0%, #c4a484 25%, #d4a5a5 50%, #9db4a6 75%, #a5b4d4 100%);
+    --card-gradient-2: linear-gradient(135deg, #e8e6e2 0%, #f0eee8 100%);
+    --card-gradient-3: linear-gradient(135deg, #d4c4b0 0%, #e4d4c0 100%);
+    --card-gradient-4: linear-gradient(135deg, #c4b4a4 0%, #d4c4b4 100%);
     
-    /* Dark Mode 基礎色彩 */
-    --text-primary: #f8fafc;
-    --text-secondary: #cbd5e1;
-    --text-light: #94a3b8;
-    --bg-primary: #0f172a;
-    --bg-secondary: #1e293b;
+    /* 莫蘭迪基礎色彩 */
+    --text-primary: #4a4a4a;
+    --text-secondary: #6a6a6a;
+    --text-light: #8a8a8a;
+    --bg-primary: #f5f3f0;
+    --bg-secondary: #ebe9e5;
     --white: #ffffff;
-    --card-bg: #1e293b;
-    --card-border: #334155;
+    --card-bg: #f8f6f3;
+    --card-border: #e0ddd8;
     
-    /* Dark Mode 陰影系統 */
-    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
-    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
-    --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
-    --shadow-xl: 0 12px 48px rgba(0, 0, 0, 0.6);
+    /* 莫蘭迪陰影系統 */
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.12);
+    --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.16);
+    --shadow-xl: 0 12px 48px rgba(0, 0, 0, 0.20);
     
     /* 現代化圓角和過渡 */
     --radius-sm: 8px;
@@ -54,10 +54,10 @@ body {
     padding: 0 24px;
 }
 
-/* 現代化頁首 - 優雅深色漸層背景 */
+/* 現代化頁首 - 莫蘭迪色系漸層背景 */
 .header {
-    background: linear-gradient(135deg, #1e293b 0%, #334155 50%, #475569 100%);
-    color: var(--white);
+    background: linear-gradient(135deg, #d4c4b0 0%, #c4b4a4 50%, #b4a494 100%);
+    color: var(--text-primary);
     padding: 4rem 0;
     text-align: center;
     position: relative;
@@ -71,9 +71,9 @@ body {
     left: 0;
     right: 0;
     bottom: 0;
-    background: radial-gradient(circle at 30% 20%, rgba(139, 92, 246, 0.15) 0%, transparent 50%),
-                radial-gradient(circle at 70% 80%, rgba(236, 72, 153, 0.1) 0%, transparent 50%);
-    opacity: 0.6;
+    background: radial-gradient(circle at 30% 20%, rgba(168, 165, 160, 0.2) 0%, transparent 50%),
+                radial-gradient(circle at 70% 80%, rgba(196, 164, 132, 0.15) 0%, transparent 50%);
+    opacity: 0.4;
 }
 
 .header-content {
@@ -221,43 +221,33 @@ body {
     font-weight: 400;
 }
 
-/* 現代化廣告容器 - Dark Mode */
+/* 隱藏廣告容器 */
 .ad-container {
-    margin: 3rem 0;
-    text-align: center;
-    min-height: 120px;
-    background: linear-gradient(135deg, var(--bg-secondary) 0%, rgba(139, 92, 246, 0.1) 100%);
-    border-radius: var(--radius-md);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--text-light);
-    font-weight: 500;
-    border: 1px solid var(--card-border);
+    display: none;
 }
 
-/* 現代化載入動畫 - Dark Mode */
+/* 現代化載入動畫 - 莫蘭迪色系 */
 .loading {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(15, 23, 42, 0.95);
+    background: rgba(245, 243, 240, 0.95);
     backdrop-filter: blur(8px);
     display: none;
     align-items: center;
     justify-content: center;
     flex-direction: column;
     z-index: 1000;
-    color: var(--white);
+    color: var(--text-primary);
 }
 
 .loading-spinner {
     width: 64px;
     height: 64px;
-    border: 6px solid rgba(255, 255, 255, 0.2);
-    border-top: 6px solid var(--white);
+    border: 6px solid rgba(74, 74, 74, 0.2);
+    border-top: 6px solid var(--text-primary);
     border-radius: 50%;
     animation: spin 1s linear infinite;
     margin-bottom: 2rem;
@@ -273,7 +263,7 @@ body {
     100% { transform: rotate(360deg); }
 }
 
-/* 現代化模態框 - Dark Mode */
+/* 現代化模態框 - 莫蘭迪色系 */
 .modal {
     display: none;
     position: fixed;
@@ -282,7 +272,7 @@ body {
     top: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(15, 23, 42, 0.9);
+    background-color: rgba(235, 233, 229, 0.9);
     backdrop-filter: blur(12px);
 }
 
@@ -421,10 +411,10 @@ body {
     box-shadow: var(--shadow-lg);
 }
 
-/* 現代化頁尾 - Dark Mode */
+/* 現代化頁尾 - 莫蘭迪色系 */
 .footer {
-    background: linear-gradient(135deg, #020617 0%, #0f172a 100%);
-    color: var(--white);
+    background: linear-gradient(135deg, #d4c4b0 0%, #c4b4a4 100%);
+    color: var(--text-primary);
     padding: 3rem 0;
     text-align: center;
     border-top: 1px solid var(--card-border);
@@ -444,7 +434,7 @@ body {
 }
 
 .footer-links a {
-    color: var(--white);
+    color: var(--text-primary);
     text-decoration: none;
     opacity: 0.8;
     transition: var(--transition);
