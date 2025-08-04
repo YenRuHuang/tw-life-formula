@@ -1,10 +1,14 @@
 name: Deploy to Hostinger
 
+# 暫時停用自動部署，改用 Zeabur
+# on:
+#   push:
+#     branches: [ main ]
+#   pull_request:
+#     branches: [ main ]
+
 on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+  workflow_dispatch: # 只允許手動觸發
 
 jobs:
   test:
