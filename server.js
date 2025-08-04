@@ -11,6 +11,7 @@ require('dotenv').config();
 const logger = require('./utils/logger');
 const { errorHandler } = require('./middleware/errorHandler');
 const { connectDatabase } = require('./config/database');
+const toolManager = require('./services/ToolManager');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -128,6 +129,15 @@ async function startServer() {
     if (process.env.NODE_ENV !== 'test') {
       await connectDatabase();
       logger.info('資料庫連接成功');
+      
+      // 初始化工具管理系統
+      try {
+        await toolManager.initialize();
+        logger.info('🔧 工具管理系統初始化成功');
+      } catch (error) {
+        logger.error('工具管理系統初始化失敗:', error);
+        throw error;
+      }
     }
 
     // 智能端口選擇：生產環境用固定端口，開發環境自動尋找可用端口
