@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const logger = require('../utils/logger');
+const User = require('../models/User');
 
 // 用戶會話管理
 router.post('/session', async(req, res, next) => {
@@ -8,23 +9,27 @@ router.post('/session', async(req, res, next) => {
     // 建立或獲取用戶會話
     if (!req.session.userId) {
       req.session.userId = `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-      req.session.createdAt = new Date().toISOString();
-      req.session.tier = 'free';
-      req.session.dailyUsage = 0;
     }
+
+    const user = await User.findOrCreateBySessionId(req.session.userId);
+    const subscription = await user.getSubscription();
+    const todayUsage = await user.getTodayUsage();
 
     res.json({
       success: true,
       data: {
-        userId: req.session.userId,
-        tier: req.session.tier,
-        dailyUsage: req.session.dailyUsage,
-        createdAt: req.session.createdAt
+        userId: user.sessionId,
+        tier: subscription ? subscription.tier : 'free',
+        dailyUsage: todayUsage.tool_usage_count,
+        dailyLimit: todayUsage.daily_limit,
+        createdAt: user.createdAt,
+        lastActive: user.lastActive
       }
     });
 
     logger.info('用戶會話建立/獲取成功', {
-      userId: req.session.userId,
+      userId: user.sessionId,
+      tier: subscription ? subscription.tier : 'free',
       ip: req.ip
     });
   } catch (error) {
@@ -45,12 +50,19 @@ router.get('/stats', async(req, res, next) => {
       });
     }
 
-    // 暫時返回模擬數據
+    const user = await User.findOrCreateBySessionId(req.session.userId);
+    const subscription = await user.getSubscription();
+    const todayUsage = await user.getTodayUsage();
+    const usageHistory = await user.getUsageHistory(5);
+
     const stats = {
-      totalUsage: req.session.dailyUsage || 0,
-      dailyLimit: req.session.tier === 'premium' ? -1 : 10,
-      remainingUsage: req.session.tier === 'premium' ? -1 : Math.max(0, 10 - (req.session.dailyUsage || 0)),
-      tier: req.session.tier
+      totalUsage: todayUsage.tool_usage_count,
+      dailyLimit: subscription && subscription.tier === 'premium' ? -1 : todayUsage.daily_limit,
+      remainingUsage: subscription && subscription.tier === 'premium'
+        ? -1
+        : Math.max(0, todayUsage.daily_limit - todayUsage.tool_usage_count),
+      tier: subscription ? subscription.tier : 'free',
+      recentUsage: usageHistory
     };
 
     res.json({

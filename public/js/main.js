@@ -3,7 +3,7 @@ let currentUser = null;
 let tools = [];
 
 // DOM 載入完成後執行
-document.addEventListener('DOMContentLoaded', async function() {
+document.addEventListener('DOMContentLoaded', async function () {
   try {
     // 初始化用戶會話
     await initializeUserSession();
@@ -137,25 +137,25 @@ async function executeToolWithMockData(tool) {
 // 獲取模擬輸入資料
 function getMockInputData(toolId) {
   switch (toolId) {
-  case 'moonlight-calculator':
-    return {
-      salary: 50000,
-      expenses: 45000,
-      savings: 5000
-    };
-  case 'noodle-survival':
-    return {
-      savings: 10000,
-      monthlyExpenses: 30000
-    };
-  case 'breakup-cost':
-    return {
-      relationshipMonths: 24,
-      monthlySpending: 8000,
-      sharedAssets: 50000
-    };
-  default:
-    return {};
+    case 'moonlight-calculator':
+      return {
+        salary: 50000,
+        expenses: 45000,
+        savings: 5000
+      };
+    case 'noodle-survival':
+      return {
+        savings: 10000,
+        monthlyExpenses: 30000
+      };
+    case 'breakup-cost':
+      return {
+        relationshipMonths: 24,
+        monthlySpending: 8000,
+        sharedAssets: 50000
+      };
+    default:
+      return {};
   }
 }
 
