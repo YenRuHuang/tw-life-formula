@@ -1,0 +1,26 @@
+{
+  "name": "tw-life-formula",
+  "version": "1.0.0",
+  "description": "台灣人生算式 - 專為台灣人設計的生活計算平台",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "build": "echo 'Build completed'",
+    "test": "jest"
+  },
+  "keywords": ["taiwan", "life", "calculator", "formula", "tools"],
+  "author": "Your Name",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "mysql2": "^3.6.0",
+    "dotenv": "^16.3.1",
+    "cors": "^2.8.5",
+    "helmet": "^7.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1",
+    "jest": "^29.6.2"
+  }
+}
