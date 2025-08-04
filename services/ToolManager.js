@@ -389,6 +389,341 @@ class ToolManager {
   }
 
   /**
+   * 分手成本計算
+   */
+  calculateBreakupCost(inputData, logic) {
+    const { relationship_months, monthly_spending, shared_assets } = inputData;
+    
+    // 計算時間成本
+    const timeCost = relationship_months * monthly_spending;
+    
+    // 計算共同資產損失 (假設分手後損失一半)
+    const assetLoss = shared_assets * 0.5;
+    
+    // 計算情感重建成本 (假設需要 6 個月重新適應)
+    const emotionalCost = monthly_spending * 6;
+    
+    const totalCost = timeCost + assetLoss + emotionalCost;
+    
+    let description = '';
+    if (totalCost >= 500000) {
+      description = `哇！分手成本高達 ${Math.round(totalCost).toLocaleString()} 元，這可以買一台車了！`;
+    } else if (totalCost >= 200000) {
+      description = `分手成本 ${Math.round(totalCost).toLocaleString()} 元，相當於一次歐洲旅行的費用！`;
+    } else {
+      description = `分手成本 ${Math.round(totalCost).toLocaleString()} 元，還在可承受範圍內。`;
+    }
+    
+    return {
+      value: Math.round(totalCost),
+      unit: '元',
+      description,
+      details: {
+        timeCost: Math.round(timeCost),
+        assetLoss: Math.round(assetLoss),
+        emotionalCost: Math.round(emotionalCost),
+        relationshipMonths: relationship_months
+      },
+      suggestions: [
+        '理性看待感情投資，避免過度消費',
+        '建立個人財務獨立性',
+        '分手前先討論共同資產分配'
+      ]
+    };
+  }
+
+  /**
+   * 手機壽命計算
+   */
+  calculatePhoneLifespan(inputData, logic) {
+    const { phone_age_months, daily_usage_hours, phone_brand } = inputData;
+    
+    // 基礎壽命 (依品牌調整)
+    const brandLifespan = {
+      'iPhone': 48, // 4年
+      'Samsung': 42, // 3.5年
+      'Google': 36, // 3年
+      'Xiaomi': 30, // 2.5年
+      'Oppo': 30,
+      'Vivo': 30,
+      'Huawei': 36,
+      'OnePlus': 36,
+      '其他': 24 // 2年
+    };
+    
+    const baseDaysLeft = (brandLifespan[phone_brand] || brandLifespan['其他'] - phone_age_months) * 30;
+    
+    // 使用強度調整
+    const usageMultiplier = daily_usage_hours > 8 ? 0.7 : 
+                           daily_usage_hours > 4 ? 0.85 : 1.0;
+    
+    const estimatedDaysLeft = Math.max(0, Math.round(baseDaysLeft * usageMultiplier));
+    
+    let description = '';
+    if (estimatedDaysLeft > 365) {
+      description = `你的 ${phone_brand} 還能撐 ${Math.round(estimatedDaysLeft/365*10)/10} 年，保養得不錯！`;
+    } else if (estimatedDaysLeft > 30) {
+      description = `你的手機預計還能用 ${Math.round(estimatedDaysLeft/30)} 個月，開始考慮換機吧！`;
+    } else {
+      description = `警告！你的手機隨時可能罷工，建議立即更換！`;
+    }
+    
+    return {
+      value: estimatedDaysLeft,
+      unit: '天',
+      description,
+      details: {
+        currentAge: phone_age_months,
+        dailyUsage: daily_usage_hours,
+        brand: phone_brand,
+        usageLevel: daily_usage_hours > 8 ? '重度使用' : daily_usage_hours > 4 ? '中度使用' : '輕度使用'
+      },
+      suggestions: [
+        '定期清理手機儲存空間',
+        '避免邊充電邊玩手機',
+        '使用手機殼和螢幕保護貼'
+      ]
+    };
+  }
+
+  /**
+   * 蝸居指數計算
+   */
+  calculateHousingIndex(inputData, logic) {
+    const { living_space, rent_price, city } = inputData;
+    
+    // 各城市平均租金 (每坪)
+    const cityRentAverage = {
+      '台北市': 2500,
+      '新北市': 1800,
+      '桃園市': 1200,
+      '台中市': 1000,
+      '台南市': 800,
+      '高雄市': 900,
+      '基隆市': 1200,
+      '新竹市': 1500,
+      '嘉義市': 700,
+      '宜蘭縣': 900
+    };
+    
+    const averageRent = cityRentAverage[city] || 1000;
+    const yourRentPerPing = rent_price / living_space;
+    const spaceRatio = living_space / 25; // 以25坪為基準
+    
+    // 蝸居指數計算 (越高越蝸居)
+    const housingIndex = Math.min(100, 
+      (yourRentPerPing / averageRent) * 100 * (spaceRatio < 1 ? (1/spaceRatio) : 1)
+    );
+    
+    let description = '';
+    let level = '';
+    
+    if (housingIndex >= 80) {
+      level = '超級蝸居族';
+      description = `你的蝸居指數高達 ${Math.round(housingIndex)}！空間小又貴，真正的都市蝸牛！`;
+    } else if (housingIndex >= 60) {
+      level = '蝸居中產';
+      description = `蝸居指數 ${Math.round(housingIndex)}，在都市生存不容易，加油！`;
+    } else {
+      level = '居住幸福';
+      description = `蝸居指數只有 ${Math.round(housingIndex)}，你的居住品質還不錯呢！`;
+    }
+    
+    return {
+      value: Math.round(housingIndex),
+      level,
+      description,
+      details: {
+        rentPerPing: Math.round(yourRentPerPing),
+        cityAverage: averageRent,
+        spaceRatio: Math.round(spaceRatio * 100) / 100
+      },
+      suggestions: [
+        '考慮搬到租金較便宜的區域',
+        '尋找室友分攤租金',
+        '善用垂直空間增加收納'
+      ]
+    };
+  }
+
+  /**
+   * 逃離台北計算
+   */
+  calculateEscapeTaipei(inputData, logic) {
+    const { current_salary, target_city, lifestyle_level } = inputData;
+    
+    // 各城市生活成本係數 (相對台北)
+    const cityCostRatio = {
+      '台中市': 0.75,
+      '台南市': 0.65,
+      '高雄市': 0.70,
+      '桃園市': 0.85,
+      '新竹市': 0.80,
+      '嘉義市': 0.60,
+      '宜蘭縣': 0.70,
+      '花蓮縣': 0.65,
+      '台東縣': 0.60
+    };
+    
+    // 生活水準調整係數
+    const lifestyleMultiplier = {
+      'basic': 0.8,
+      'comfortable': 1.0,
+      'luxury': 1.5
+    };
+    
+    const targetCostRatio = cityCostRatio[target_city] || 0.70;
+    const lifestyleRatio = lifestyleMultiplier[lifestyle_level] || 1.0;
+    
+    // 計算在目標城市需要的薪水
+    const requiredSalary = current_salary * targetCostRatio * lifestyleRatio;
+    const savings = current_salary - requiredSalary;
+    const savingsPercentage = (savings / current_salary) * 100;
+    
+    let description = '';
+    if (savingsPercentage > 30) {
+      description = `太棒了！逃離台北到${target_city}，你每月可以省下 ${Math.round(savings).toLocaleString()} 元，省錢率 ${Math.round(savingsPercentage)}%！`;
+    } else if (savingsPercentage > 10) {
+      description = `搬到${target_city}可以省下 ${Math.round(savings).toLocaleString()} 元，省錢率 ${Math.round(savingsPercentage)}%，值得考慮！`;
+    } else {
+      description = `搬到${target_city}只能省下 ${Math.round(savings).toLocaleString()} 元，省錢效果有限。`;
+    }
+    
+    return {
+      value: Math.round(savings),
+      unit: '元/月',
+      description,
+      details: {
+        currentSalary: current_salary,
+        requiredSalary: Math.round(requiredSalary),
+        savingsPercentage: Math.round(savingsPercentage),
+        targetCity: target_city,
+        lifestyleLevel: lifestyle_level
+      },
+      suggestions: [
+        '考慮遠距工作保持台北薪水',
+        '研究目標城市的就業機會',
+        '計算搬家和適應成本'
+      ]
+    };
+  }
+
+  /**
+   * 養車 vs Uber 計算
+   */
+  calculateCarVsUber(inputData, logic) {
+    const { car_price, monthly_fuel, monthly_trips } = inputData;
+    
+    // 車輛成本計算 (5年攤提)
+    const monthlyCarPayment = car_price / 60; // 5年攤提
+    const monthlyInsurance = 3000; // 平均保險費
+    const monthlyMaintenance = 2000; // 平均保養費
+    const monthlyParking = 3000; // 平均停車費
+    
+    const totalMonthlyCar = monthlyCarPayment + monthlyInsurance + 
+                           monthlyMaintenance + monthlyParking + monthly_fuel;
+    
+    // Uber 成本計算
+    const averageUberCost = 200; // 平均每趟 200 元
+    const monthlyUberCost = monthly_trips * averageUberCost;
+    
+    const difference = totalMonthlyCar - monthlyUberCost;
+    
+    let description = '';
+    let recommendation = '';
+    
+    if (difference > 10000) {
+      recommendation = 'Uber';
+      description = `養車比搭 Uber 貴 ${Math.round(difference).toLocaleString()} 元！強烈建議搭 Uber！`;
+    } else if (difference > 5000) {
+      recommendation = 'Uber';
+      description = `養車比搭 Uber 貴 ${Math.round(difference).toLocaleString()} 元，建議搭 Uber 比較划算。`;
+    } else if (difference > -5000) {
+      recommendation = '差不多';
+      description = `養車和搭 Uber 成本差不多，差異只有 ${Math.abs(Math.round(difference)).toLocaleString()} 元。`;
+    } else {
+      recommendation = '養車';
+      description = `養車比搭 Uber 便宜 ${Math.abs(Math.round(difference)).toLocaleString()} 元，養車較划算！`;
+    }
+    
+    return {
+      value: Math.abs(Math.round(difference)),
+      unit: '元/月',
+      description,
+      details: {
+        carCost: Math.round(totalMonthlyCar),
+        uberCost: Math.round(monthlyUberCost),
+        recommendation,
+        breakdown: {
+          carPayment: Math.round(monthlyCarPayment),
+          insurance: monthlyInsurance,
+          maintenance: monthlyMaintenance,
+          parking: monthlyParking,
+          fuel: monthly_fuel
+        }
+      },
+      suggestions: [
+        '考慮用車頻率和距離',
+        '評估停車便利性',
+        '考慮汽車帶來的生活便利性'
+      ]
+    };
+  }
+
+  /**
+   * 生日撞期計算
+   */
+  calculateBirthdayCollision(inputData, logic) {
+    const { birth_month, birth_day } = inputData;
+    
+    // 台灣人口約 2300 萬
+    const taiwanPopulation = 23000000;
+    
+    // 假設生日分布均勻 (365 天)
+    const daysInYear = 365;
+    const sameBirthdayPeople = Math.round(taiwanPopulation / daysInYear);
+    
+    // 特殊日期調整
+    const specialDates = {
+      '1-1': 1.2,   // 新年
+      '2-14': 1.5,  // 情人節
+      '10-10': 1.3, // 國慶日
+      '12-25': 1.1  // 聖誕節
+    };
+    
+    const dateKey = `${birth_month}-${birth_day}`;
+    const multiplier = specialDates[dateKey] || 1.0;
+    const adjustedCount = Math.round(sameBirthdayPeople * multiplier);
+    
+    // 計算在你生日當天全台灣有多少人慶生
+    const birthdayPartyPeople = adjustedCount;
+    
+    let description = '';
+    if (multiplier > 1.1) {
+      description = `哇！你的生日是特殊日期，全台灣有約 ${adjustedCount.toLocaleString()} 人跟你同天生日，超熱鬧！`;
+    } else {
+      description = `全台灣約有 ${adjustedCount.toLocaleString()} 人跟你在同一天慶生，你們是生日夥伴！`;
+    }
+    
+    return {
+      value: adjustedCount,
+      unit: '人',
+      description,
+      details: {
+        birthDate: `${birth_month}/${birth_day}`,
+        probability: Math.round((adjustedCount / taiwanPopulation) * 10000) / 100,
+        isSpecialDate: multiplier > 1.0,
+        taiwanPopulation
+      },
+      suggestions: [
+        '可以在社群媒體上找找同生日的人',
+        '特殊日期生日記得提早訂餐廳',
+        '同生日的人可以組成生日俱樂部'
+      ]
+    };
+  }
+
+  /**
    * 通用計算邏輯執行器
    */
   executeGenericCalculation(inputData, logic) {
