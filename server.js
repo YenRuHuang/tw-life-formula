@@ -15,6 +15,25 @@ const { connectDatabase } = require('./config/database');
 const app = express();
 const PORT = process.env.PORT || 3001;
 
+// 動態端口尋找函數
+async function findAvailablePort(startPort) {
+  const net = require('net');
+  
+  return new Promise((resolve) => {
+    const server = net.createServer();
+    
+    server.listen(startPort, () => {
+      const { port } = server.address();
+      server.close(() => resolve(port));
+    });
+    
+    server.on('error', () => {
+      // 端口被佔用，嘗試下一個
+      resolve(findAvailablePort(startPort + 1));
+    });
+  });
+}
+
 // 安全中介軟體
 app.use(helmet({
   contentSecurityPolicy: {
@@ -111,12 +130,26 @@ async function startServer() {
       logger.info('資料庫連接成功');
     }
 
+    // 智能端口選擇：生產環境用固定端口，開發環境自動尋找可用端口
+    let finalPort = PORT;
+    if (process.env.NODE_ENV !== 'production' && process.env.NODE_ENV !== 'test') {
+      finalPort = await findAvailablePort(PORT);
+      if (finalPort !== PORT) {
+        logger.info(`端口 ${PORT} 被佔用，自動切換到端口 ${finalPort}`);
+      }
+    }
+
     // 啟動伺服器
-    const server = app.listen(PORT, () => {
+    const server = app.listen(finalPort, () => {
       if (process.env.NODE_ENV !== 'test') {
         logger.info('🚀 台灣人生算式伺服器啟動成功！');
-        logger.info(`📍 伺服器地址: http://localhost:${PORT}`);
+        logger.info(`📍 伺服器地址: http://localhost:${finalPort}`);
         logger.info(`🌍 環境: ${process.env.NODE_ENV || 'development'}`);
+        
+        // 如果端口發生變化，提供建議
+        if (finalPort !== PORT) {
+          logger.info(`💡 建議：為避免端口衝突，請在 .env 中設定 PORT=${finalPort}`);
+        }
       }
     });
 
