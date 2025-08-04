@@ -13,7 +13,7 @@ const { errorHandler } = require('./middleware/errorHandler');
 const { connectDatabase } = require('./config/database');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 
 // 安全中介軟體
 app.use(helmet({

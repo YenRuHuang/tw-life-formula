@@ -6,7 +6,7 @@ const ToolConfig = require('../models/ToolConfig');
 const User = require('../models/User');
 
 // 獲取所有工具列表
-router.get('/', async(req, res, next) => {
+router.get('/', async (req, res, next) => {
   try {
     const tools = await ToolConfig.getAllActive();
 
@@ -29,7 +29,7 @@ router.get('/', async(req, res, next) => {
 });
 
 // 執行特定工具
-router.post('/:toolId', async(req, res, next) => {
+router.post('/:toolId', async (req, res, next) => {
   try {
     const { toolId } = req.params;
     const inputData = req.body;

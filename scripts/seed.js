@@ -1,3 +1,4 @@
+require('dotenv').config();
 const { connectDatabase, executeQuery } = require('../config/database');
 const logger = require('../utils/logger');
 
@@ -51,7 +52,7 @@ const seedData = {
       description: '分析分手將損失多少金錢和回憶',
       category: 'calculator',
       input_schema: JSON.stringify({
-        relationship_months: { type: 'numberred: true, min: 1, label: '交往月數' },
+        relationship_months: { type: 'number', required: true, min: 1, label: '交往月數' },
         monthly_spending: { type: 'number', required: true, min: 0, label: '每月花費' },
         shared_assets: { type: 'number', required: true, min: 0, label: '共同資產' }
       }),

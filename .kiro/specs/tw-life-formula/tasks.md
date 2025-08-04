@@ -8,7 +8,7 @@
   - 設置 GitHub Actions 自動部署到 Hostinger
   - _需求: 5.1, 5.2_
 
-- [-] 2. 建立資料庫架構
+- [x] 2. 建立資料庫架構
   - 創建用戶表（users）和會話管理
   - 創建工具使用記錄表（tool_usage）
   - 創建分享統計表（share_stats）
