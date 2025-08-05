@@ -1,6 +1,7 @@
 const ToolConfig = require('../models/ToolConfig');
 const logger = require('../utils/logger');
 const aiContentGenerator = require('./AIContentGenerator');
+const TestEngine = require('./TestEngine');
 
 /**
  * 核心工具管理系統
@@ -273,6 +274,13 @@ class ToolManager {
         
         case 'housing-index':
           return this.calculateHousingIndex(inputData, calculationLogic);
+        
+        // 測驗類工具 - 使用 TestEngine
+        case 'lazy-index-test':
+        case 'gaming-addiction-calculator':
+        case 'aging-simulator':
+        case 'food-expense-shocker':
+          return TestEngine.calculate(tool.type, inputData);
         
         default:
           // 通用計算邏輯（如果配置中定義了公式）
