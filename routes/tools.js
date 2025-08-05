@@ -3,6 +3,7 @@ const router = express.Router();
 const logger = require('../utils/logger');
 const { AppError } = require('../middleware/errorHandler');
 const toolManager = require('../services/ToolManager');
+const shareGenerator = require('../services/ShareGenerator');
 const User = require('../models/User');
 
 // 獲取所有工具列表
@@ -52,6 +53,113 @@ router.get('/category/:category', async (req, res, next) => {
       ip: req.ip,
       category,
       toolCount: tools.length
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// 獲取分享統計
+router.get('/share/stats', async (req, res, next) => {
+  try {
+    const stats = await shareGenerator.getShareStats();
+
+    res.json({
+      success: true,
+      data: stats
+    });
+
+    logger.info('分享統計查詢成功', {
+      userId: req.session.userId
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// 生成分享圖片
+router.post('/:toolId/share/image', async (req, res, next) => {
+  try {
+    const { toolId } = req.params;
+    const { result, platform = 'facebook' } = req.body;
+
+    if (!result) {
+      throw new AppError('缺少計算結果', 400, 'missing_result');
+    }
+
+    // 生成分享圖片
+    const shareImage = await shareGenerator.generateShareImage(toolId, result, platform);
+
+    // 記錄分享統計
+    await shareGenerator.recordShare(toolId, platform, req.session.userId, 'generate');
+
+    res.json({
+      success: true,
+      data: shareImage
+    });
+
+    logger.info('分享圖片生成成功', {
+      toolId,
+      platform,
+      userId: req.session.userId,
+      imagePath: shareImage.imagePath
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// 生成分享文案
+router.post('/:toolId/share/content', async (req, res, next) => {
+  try {
+    const { toolId } = req.params;
+    const { result, platform = 'facebook' } = req.body;
+
+    if (!result) {
+      throw new AppError('缺少計算結果', 400, 'missing_result');
+    }
+
+    // 生成分享文案
+    const shareContent = await shareGenerator.generateShareContent(toolId, result, platform);
+
+    res.json({
+      success: true,
+      data: shareContent
+    });
+
+    logger.info('分享文案生成成功', {
+      toolId,
+      platform,
+      userId: req.session.userId
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// 記錄分享行為
+router.post('/:toolId/share/record', async (req, res, next) => {
+  try {
+    const { toolId } = req.params;
+    const { platform, action = 'share' } = req.body;
+
+    if (!platform) {
+      throw new AppError('缺少分享平台', 400, 'missing_platform');
+    }
+
+    // 記錄分享統計
+    await shareGenerator.recordShare(toolId, platform, req.session.userId, action);
+
+    res.json({
+      success: true,
+      message: '分享記錄成功'
+    });
+
+    logger.info('分享行為記錄成功', {
+      toolId,
+      platform,
+      action,
+      userId: req.session.userId
     });
   } catch (error) {
     next(error);
@@ -161,5 +269,6 @@ router.post('/:toolId', async (req, res, next) => {
     }
   }
 });
+
 
 module.exports = router;

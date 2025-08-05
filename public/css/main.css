@@ -406,9 +406,170 @@ body {
     color: var(--white);
 }
 
+.share-btn.instagram {
+    background: linear-gradient(135deg, #e4405f 0%, #f77737 50%, #fcaf45 100%);
+    color: var(--white);
+}
+
 .share-btn:hover {
     transform: translateY(-3px);
     box-shadow: var(--shadow-lg);
+}
+
+.share-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* 分享區域樣式 */
+.share-section {
+    margin-top: 3rem;
+    padding: 2rem;
+    background: linear-gradient(135deg, var(--bg-secondary) 0%, rgba(139, 92, 246, 0.05) 100%);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--card-border);
+    text-align: center;
+}
+
+.share-section h3 {
+    margin-bottom: 1.5rem;
+    color: var(--text-primary);
+    font-weight: 700;
+    font-size: 1.3rem;
+}
+
+.share-preview {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background: var(--white);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--card-border);
+    box-shadow: var(--shadow-sm);
+}
+
+.share-preview img {
+    max-width: 100%;
+    height: auto;
+    border-radius: var(--radius-sm);
+    margin-bottom: 1rem;
+    box-shadow: var(--shadow-sm);
+}
+
+.share-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.copy-link-btn,
+.download-image-btn {
+    padding: 0.75rem 1.5rem;
+    border: 2px solid var(--card-border);
+    border-radius: var(--radius-md);
+    background: var(--white);
+    color: var(--text-primary);
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: var(--transition);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.copy-link-btn:hover,
+.download-image-btn:hover {
+    background: var(--bg-secondary);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+/* Instagram 分享對話框 */
+.instagram-share-dialog {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1002;
+    padding: 1rem;
+}
+
+.dialog-content {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    padding: 2rem;
+    max-width: 500px;
+    width: 100%;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: var(--shadow-xl);
+    position: relative;
+}
+
+.dialog-content h3 {
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+    font-weight: 700;
+    text-align: center;
+}
+
+.dialog-content textarea {
+    width: 100%;
+    min-height: 120px;
+    padding: 1rem;
+    border: 2px solid var(--card-border);
+    border-radius: var(--radius-md);
+    font-family: inherit;
+    font-size: 0.9rem;
+    resize: vertical;
+    background: var(--bg-secondary);
+}
+
+.dialog-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 2rem;
+    flex-wrap: wrap;
+}
+
+.download-btn,
+.copy-btn,
+.close-btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: var(--transition);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.download-btn {
+    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+    color: var(--white);
+}
+
+.copy-btn {
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    color: var(--white);
+}
+
+.close-btn {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    border: 2px solid var(--card-border);
 }
 
 /* 現代化頁尾 - 莫蘭迪色系 */

@@ -13,6 +13,7 @@ const { errorHandler } = require('./middleware/errorHandler');
 const { connectDatabase } = require('./config/database');
 const toolManager = require('./services/ToolManager');
 const aiContentGenerator = require('./services/AIContentGenerator');
+const shareGenerator = require('./services/ShareGenerator');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -146,6 +147,15 @@ async function startServer() {
         logger.info('🤖 AI 內容生成器初始化成功', aiResult);
       } catch (error) {
         logger.warn('AI 內容生成器初始化失敗，將使用備用模式:', error);
+      }
+      
+      // 初始化分享生成系統
+      try {
+        await shareGenerator.initialize();
+        logger.info('📤 分享生成系統初始化成功');
+      } catch (error) {
+        logger.error('分享生成系統初始化失敗:', error);
+        throw error;
       }
     }
 

@@ -461,13 +461,30 @@ function showResult(tool, result) {
         </div>
         ` : ''}
 
-        <div class="share-buttons">
-            <button class="share-btn facebook" onclick="shareToFacebook('${result.toolName || tool.name}', '${displayMessage}')">
-                分享到 Facebook
-            </button>
-            <button class="share-btn line" onclick="shareToLine('${result.toolName || tool.name}', '${displayMessage}')">
-                分享到 LINE
-            </button>
+        <div class="share-section">
+            <h3>📤 分享你的結果</h3>
+            <div class="share-buttons">
+                <button class="share-btn facebook" onclick="shareWithImage('${tool.id}', 'facebook', ${JSON.stringify(result)})">
+                    📘 Facebook
+                </button>
+                <button class="share-btn line" onclick="shareWithImage('${tool.id}', 'line', ${JSON.stringify(result)})">
+                    💬 LINE
+                </button>
+                <button class="share-btn instagram" onclick="shareWithImage('${tool.id}', 'instagram', ${JSON.stringify(result)})">
+                    📷 Instagram
+                </button>
+            </div>
+            <div id="sharePreview" class="share-preview" style="display: none;">
+                <img id="shareImage" alt="分享圖片預覽" />
+                <div class="share-actions">
+                    <button class="copy-link-btn" onclick="copyShareLink()">
+                        🔗 複製連結
+                    </button>
+                    <button class="download-image-btn" onclick="downloadShareImage()">
+                        💾 下載圖片
+                    </button>
+                </div>
+            </div>
         </div>
 
         <div class="usage-info">
@@ -633,4 +650,233 @@ function formatCurrency(amount) {
     currency: 'TWD',
     minimumFractionDigits: 0
   }).format(amount);
+}
+
+// 新版分享功能 - 支持圖片生成
+// eslint-disable-next-line no-unused-vars
+async function shareWithImage(toolId, platform, result) {
+  try {
+    const shareBtn = event.target;
+    const originalText = shareBtn.textContent;
+    
+    // 更新按鈕狀態
+    shareBtn.disabled = true;
+    shareBtn.textContent = '生成中...';
+    
+    // 生成分享圖片
+    const imageResponse = await fetch(`/api/tools/${toolId}/share/image`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        result: result.result,
+        platform: platform
+      })
+    });
+    
+    const imageData = await imageResponse.json();
+    
+    if (!imageData.success) {
+      throw new Error(imageData.error?.message || '圖片生成失敗');
+    }
+    
+    // 生成分享文案
+    const contentResponse = await fetch(`/api/tools/${toolId}/share/content`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        result: result.result,
+        platform: platform
+      })
+    });
+    
+    const contentData = await contentResponse.json();
+    
+    if (!contentData.success) {
+      throw new Error(contentData.error?.message || '文案生成失敗');
+    }
+    
+    // 顯示分享預覽
+    showSharePreview(imageData.data, contentData.data);
+    
+    // 根據平台執行分享
+    await executeShare(platform, imageData.data, contentData.data);
+    
+    // 記錄分享行為
+    await recordShareAction(toolId, platform, 'share');
+    
+  } catch (error) {
+    console.error('分享失敗:', error);
+    showInlineError(`分享失敗：${error.message}`);
+  } finally {
+    // 恢復按鈕狀態
+    if (shareBtn) {
+      shareBtn.disabled = false;
+      shareBtn.textContent = originalText;
+    }
+  }
+}
+
+// 顯示分享預覽
+function showSharePreview(imageData, contentData) {
+  const sharePreview = document.getElementById('sharePreview');
+  const shareImage = document.getElementById('shareImage');
+  
+  if (sharePreview && shareImage) {
+    shareImage.src = imageData.imagePath;
+    shareImage.dataset.downloadUrl = imageData.imagePath;
+    sharePreview.style.display = 'block';
+    
+    // 滾動到預覽區域
+    sharePreview.scrollIntoView({ behavior: 'smooth' });
+  }
+}
+
+// 執行分享到不同平台
+async function executeShare(platform, imageData, contentData) {
+  const url = encodeURIComponent(window.location.href);
+  const text = encodeURIComponent(contentData.content);
+  
+  switch (platform) {
+    case 'facebook':
+      window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}&quote=${text}`, '_blank', 'width=600,height=400');
+      break;
+      
+    case 'line':
+      window.open(`https://social-plugins.line.me/lineit/share?url=${url}&text=${text}`, '_blank', 'width=600,height=400');
+      break;
+      
+    case 'instagram':
+      // Instagram 需要特殊處理，提示用戶手動分享
+      showInstagramShareDialog(imageData.imagePath, contentData.content);
+      break;
+      
+    default:
+      throw new Error('不支援的分享平台');
+  }
+}
+
+// Instagram 分享對話框
+function showInstagramShareDialog(imagePath, content) {
+  const dialog = document.createElement('div');
+  dialog.className = 'instagram-share-dialog';
+  dialog.innerHTML = `
+    <div class="dialog-content">
+      <h3>📷 Instagram 分享</h3>
+      <p>Instagram 需要手動分享，請按照以下步驟：</p>
+      <ol>
+        <li>點擊「下載圖片」保存到相簿</li>
+        <li>開啟 Instagram App</li>
+        <li>選擇剛下載的圖片</li>
+        <li>複製下方文案作為貼文內容</li>
+      </ol>
+      
+      <div class="share-content">
+        <label>分享文案：</label>
+        <textarea readonly onclick="this.select()">${content}</textarea>
+      </div>
+      
+      <div class="dialog-actions">
+        <button onclick="downloadShareImage()" class="download-btn">💾 下載圖片</button>
+        <button onclick="copyToClipboard('${content}')" class="copy-btn">📋 複製文案</button>
+        <button onclick="closeInstagramDialog()" class="close-btn">關閉</button>
+      </div>
+    </div>
+  `;
+  
+  document.body.appendChild(dialog);
+  
+  // 自動選中文案
+  const textarea = dialog.querySelector('textarea');
+  setTimeout(() => textarea.select(), 100);
+}
+
+// 關閉 Instagram 對話框
+// eslint-disable-next-line no-unused-vars
+function closeInstagramDialog() {
+  const dialog = document.querySelector('.instagram-share-dialog');
+  if (dialog) {
+    dialog.remove();
+  }
+}
+
+// 複製分享連結
+// eslint-disable-next-line no-unused-vars
+function copyShareLink() {
+  const url = window.location.href;
+  copyToClipboard(url);
+  showInlineError('連結已複製到剪貼簿！');
+}
+
+// 下載分享圖片
+// eslint-disable-next-line no-unused-vars
+function downloadShareImage() {
+  const shareImage = document.getElementById('shareImage');
+  if (shareImage && shareImage.dataset.downloadUrl) {
+    const link = document.createElement('a');
+    link.href = shareImage.dataset.downloadUrl;
+    link.download = `台灣人生算式_${Date.now()}.png`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    showInlineError('圖片下載完成！');
+  }
+}
+
+// 複製到剪貼簿
+function copyToClipboard(text) {
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).then(() => {
+      showInlineError('內容已複製到剪貼簿！');
+    }).catch(() => {
+      fallbackCopyToClipboard(text);
+    });
+  } else {
+    fallbackCopyToClipboard(text);
+  }
+}
+
+// 備用複製方法
+function fallbackCopyToClipboard(text) {
+  const textArea = document.createElement('textarea');
+  textArea.value = text;
+  textArea.style.position = 'fixed';
+  textArea.style.left = '-999999px';
+  textArea.style.top = '-999999px';
+  document.body.appendChild(textArea);
+  textArea.focus();
+  textArea.select();
+  
+  try {
+    document.execCommand('copy');
+    showInlineError('內容已複製到剪貼簿！');
+  } catch (err) {
+    console.error('複製失敗:', err);
+    showInlineError('複製失敗，請手動複製');
+  }
+  
+  document.body.removeChild(textArea);
+}
+
+// 記錄分享行為
+async function recordShareAction(toolId, platform, action) {
+  try {
+    await fetch(`/api/tools/${toolId}/share/record`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        platform: platform,
+        action: action
+      })
+    });
+  } catch (error) {
+    console.error('分享記錄失敗:', error);
+    // 不影響用戶體驗，靜默失敗
+  }
 }

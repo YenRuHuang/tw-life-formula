@@ -46,6 +46,7 @@
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
     "bcryptjs": "^2.4.3",
+    "canvas": "^3.1.2",
     "compression": "^1.7.4",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
@@ -59,6 +60,7 @@
     "jsonwebtoken": "^9.0.2",
     "multer": "^1.4.5-lts.1",
     "mysql2": "^3.6.0",
+    "qrcode": "^1.5.4",
     "winston": "^3.11.0"
   },
   "devDependencies": {
