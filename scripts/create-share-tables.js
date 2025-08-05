@@ -18,7 +18,7 @@ async function createShareTables() {
       CREATE TABLE IF NOT EXISTS share_stats (
         id INT PRIMARY KEY AUTO_INCREMENT,
         user_id VARCHAR(36) NULL,
-        tool_type VARCHAR(50) NOT NULL,
+        tool_id VARCHAR(50) NOT NULL,
         platform VARCHAR(20) NOT NULL,
         action VARCHAR(20) NOT NULL DEFAULT 'generate',
         ip_address VARCHAR(45) NULL,
@@ -26,11 +26,11 @@ async function createShareTables() {
         referrer VARCHAR(255) NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         
-        INDEX idx_tool_type (tool_type),
+        INDEX idx_tool_id (tool_id),
         INDEX idx_platform (platform),
         INDEX idx_action (action),
         INDEX idx_created_at (created_at),
-        INDEX idx_composite (tool_type, platform, action)
+        INDEX idx_composite (tool_id, platform, action)
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
     `);
 
@@ -40,7 +40,7 @@ async function createShareTables() {
     await executeQuery(`
       CREATE TABLE IF NOT EXISTS share_cache (
         id INT PRIMARY KEY AUTO_INCREMENT,
-        tool_type VARCHAR(50) NOT NULL,
+        tool_id VARCHAR(50) NOT NULL,
         platform VARCHAR(20) NOT NULL,
         result_hash VARCHAR(64) NOT NULL,
         image_path VARCHAR(255) NOT NULL,
@@ -49,7 +49,7 @@ async function createShareTables() {
         expires_at TIMESTAMP NOT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         
-        UNIQUE KEY unique_cache (tool_type, platform, result_hash),
+        UNIQUE KEY unique_cache (tool_id, platform, result_hash),
         INDEX idx_expires (expires_at)
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
     `);
