@@ -1,5 +1,6 @@
 const ToolConfig = require('../models/ToolConfig');
 const logger = require('../utils/logger');
+const aiContentGenerator = require('./AIContentGenerator');
 
 /**
  * 核心工具管理系統
@@ -213,16 +214,19 @@ class ToolManager {
       // 執行工具計算邏輯
       const result = await this.executeCalculation(tool, inputData);
       
+      // 使用 AI 增強結果描述和建議
+      const aiEnhancedResult = await this.enhanceResultWithAI(toolType, inputData, result, userId);
+      
       // 生成結果資料
       const output = {
         toolType,
         toolName: tool.name,
         inputData,
-        result,
+        result: aiEnhancedResult,
         timestamp: new Date().toISOString(),
         userId,
         // 添加分享和變現配置
-        shareConfig: this.generateShareConfig(tool, result),
+        shareConfig: this.generateShareConfig(tool, aiEnhancedResult),
         monetizationConfig: tool.monetizationConfig
       };
       
@@ -721,6 +725,92 @@ class ToolManager {
         '同生日的人可以組成生日俱樂部'
       ]
     };
+  }
+
+  /**
+   * 使用 AI 增強計算結果
+   * @param {string} toolType - 工具類型
+   * @param {Object} inputData - 輸入資料
+   * @param {Object} result - 原始計算結果
+   * @param {string} userId - 用戶ID
+   */
+  async enhanceResultWithAI(toolType, inputData, result, userId = null) {
+    try {
+      // 並行生成 AI 內容
+      const [descriptionResult, suggestionsResult, shareContentResult, comparisonsResult] = await Promise.allSettled([
+        aiContentGenerator.generateResultDescription(toolType, inputData, result),
+        aiContentGenerator.generateSuggestions(toolType, inputData, result),
+        aiContentGenerator.generateShareContent(toolType, result, 'facebook'),
+        aiContentGenerator.generateShockingComparisons(toolType, result)
+      ]);
+
+      // 建立增強後的結果
+      const enhancedResult = { ...result };
+
+      // 處理 AI 生成的描述
+      if (descriptionResult.status === 'fulfilled' && descriptionResult.value) {
+        if (descriptionResult.value.isAI && !descriptionResult.value.fallback) {
+          enhancedResult.description = descriptionResult.value.description;
+          enhancedResult.aiGenerated = true;
+        }
+        enhancedResult.descriptionMetadata = {
+          isAI: descriptionResult.value.isAI,
+          fallback: descriptionResult.value.fallback
+        };
+      }
+
+      // 處理 AI 生成的建議
+      if (suggestionsResult.status === 'fulfilled' && suggestionsResult.value) {
+        if (suggestionsResult.value.isAI && !suggestionsResult.value.fallback) {
+          enhancedResult.suggestions = suggestionsResult.value.suggestions;
+        }
+        enhancedResult.suggestionsMetadata = {
+          isAI: suggestionsResult.value.isAI,
+          fallback: suggestionsResult.value.fallback
+        };
+      }
+
+      // 處理分享內容
+      if (shareContentResult.status === 'fulfilled' && shareContentResult.value) {
+        enhancedResult.shareContent = {
+          facebook: shareContentResult.value.content,
+          isAI: shareContentResult.value.isAI,
+          fallback: shareContentResult.value.fallback
+        };
+      }
+
+      // 處理震撼比較
+      if (comparisonsResult.status === 'fulfilled' && comparisonsResult.value) {
+        enhancedResult.shockingComparisons = {
+          comparisons: comparisonsResult.value.comparisons,
+          isAI: comparisonsResult.value.isAI,
+          fallback: comparisonsResult.value.fallback
+        };
+      }
+
+      // 記錄 AI 增強狀態
+      enhancedResult.aiEnhanced = true;
+      enhancedResult.enhancementTimestamp = new Date().toISOString();
+
+      logger.info(`🤖 AI 增強結果完成: ${toolType}`, {
+        hasAIDescription: enhancedResult.descriptionMetadata?.isAI,
+        hasAISuggestions: enhancedResult.suggestionsMetadata?.isAI,
+        hasAIShare: enhancedResult.shareContent?.isAI,
+        hasAIComparisons: enhancedResult.shockingComparisons?.isAI
+      });
+
+      return enhancedResult;
+
+    } catch (error) {
+      logger.error(`AI 增強失敗: ${toolType}`, error);
+      
+      // AI 增強失敗時返回原始結果
+      return {
+        ...result,
+        aiEnhanced: false,
+        enhancementError: error.message
+      };
+    }
   }
 
   /**

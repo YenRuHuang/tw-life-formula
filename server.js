@@ -12,6 +12,7 @@ const logger = require('./utils/logger');
 const { errorHandler } = require('./middleware/errorHandler');
 const { connectDatabase } = require('./config/database');
 const toolManager = require('./services/ToolManager');
+const aiContentGenerator = require('./services/AIContentGenerator');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -137,6 +138,14 @@ async function startServer() {
       } catch (error) {
         logger.error('工具管理系統初始化失敗:', error);
         throw error;
+      }
+      
+      // 初始化 AI 內容生成器
+      try {
+        const aiResult = await aiContentGenerator.initialize();
+        logger.info('🤖 AI 內容生成器初始化成功', aiResult);
+      } catch (error) {
+        logger.warn('AI 內容生成器初始化失敗，將使用備用模式:', error);
       }
     }
 
