@@ -143,8 +143,93 @@ function showInputForm(tool) {
       executeToolWithFormData(tool, form);
     });
   }
-
+  
   modal.style.display = 'block';
+}
+
+// 綁定分享按鈕事件監聽器
+function bindShareButtonEvents(tool, result) {
+  // 等待DOM更新後再綁定事件
+  setTimeout(() => {
+    const shareButtons = document.querySelectorAll('#shareButtonsContainer .share-btn');
+    
+    shareButtons.forEach(button => {
+      button.addEventListener('click', async (e) => {
+        e.preventDefault();
+        
+        const toolId = button.dataset.toolId;
+        const platform = button.dataset.platform;
+        
+        if (toolId && platform) {
+          await handleShareClick(toolId, platform, result, button);
+        }
+      });
+    });
+  }, 100);
+}
+
+// 處理分享按鈕點擊
+async function handleShareClick(toolId, platform, result, buttonElement) {
+  const originalText = buttonElement.textContent;
+  
+  try {
+    // 更新按鈕狀態
+    buttonElement.disabled = true;
+    buttonElement.textContent = '生成中...';
+    
+    // 生成分享圖片
+    const imageResponse = await fetch(`/api/tools/${toolId}/share/image`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        result: result.result,
+        platform: platform
+      })
+    });
+    
+    const imageData = await imageResponse.json();
+    
+    if (!imageData.success) {
+      throw new Error(imageData.error?.message || '圖片生成失敗');
+    }
+    
+    // 生成分享文案
+    const contentResponse = await fetch(`/api/tools/${toolId}/share/content`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        result: result.result,
+        platform: platform
+      })
+    });
+    
+    const contentData = await contentResponse.json();
+    
+    if (!contentData.success) {
+      throw new Error(contentData.error?.message || '文案生成失敗');
+    }
+    
+    // 顯示分享預覽
+    showSharePreview(imageData.data, contentData.data);
+    
+    // 根據平台執行分享
+    await executeShare(platform, imageData.data, contentData.data);
+    
+    // 記錄分享行為
+    await recordShareAction(toolId, platform, 'share');
+    
+  } catch (error) {
+    console.error('分享失敗:', error);
+    showInlineError(`分享失敗：${error.message}`);
+  } finally {
+    // 恢復按鈕狀態
+    buttonElement.disabled = false;
+    buttonElement.textContent = originalText;
+  }
 }
 
 // 生成動態輸入表單
@@ -463,24 +548,24 @@ function showResult(tool, result) {
 
         <div class="share-section">
             <h3>📤 分享你的結果</h3>
-            <div class="share-buttons">
-                <button class="share-btn facebook" onclick="shareWithImage('${tool.id}', 'facebook', ${JSON.stringify(result)})">
+            <div class="share-buttons" id="shareButtonsContainer">
+                <button class="share-btn facebook" data-tool-id="${tool.id}" data-platform="facebook">
                     📘 Facebook
                 </button>
-                <button class="share-btn line" onclick="shareWithImage('${tool.id}', 'line', ${JSON.stringify(result)})">
+                <button class="share-btn line" data-tool-id="${tool.id}" data-platform="line">
                     💬 LINE
                 </button>
-                <button class="share-btn instagram" onclick="shareWithImage('${tool.id}', 'instagram', ${JSON.stringify(result)})">
+                <button class="share-btn instagram" data-tool-id="${tool.id}" data-platform="instagram">
                     📷 Instagram
                 </button>
             </div>
             <div id="sharePreview" class="share-preview" style="display: none;">
                 <img id="shareImage" alt="分享圖片預覽" />
                 <div class="share-actions">
-                    <button class="copy-link-btn" onclick="copyShareLink()">
+                    <button class="copy-link-btn" id="copyLinkBtn">
                         🔗 複製連結
                     </button>
-                    <button class="download-image-btn" onclick="downloadShareImage()">
+                    <button class="download-image-btn" id="downloadImageBtn">
                         💾 下載圖片
                     </button>
                 </div>
@@ -492,6 +577,9 @@ function showResult(tool, result) {
         </div>
     `;
 
+  // 綁定分享按鈕事件（現在有結果數據了）
+  bindShareButtonEvents(tool, result);
+  
   modal.style.display = 'block';
 }
 
@@ -726,12 +814,46 @@ function showSharePreview(imageData, contentData) {
   const shareImage = document.getElementById('shareImage');
   
   if (sharePreview && shareImage) {
-    shareImage.src = imageData.imagePath;
-    shareImage.dataset.downloadUrl = imageData.imagePath;
+    // 使用正確的圖片路徑
+    const imagePath = imageData.imagePath || imageData.imageUrl || '';
+    shareImage.src = imagePath;
+    shareImage.dataset.downloadUrl = imagePath;
     sharePreview.style.display = 'block';
+    
+    // 綁定分享預覽按鈕事件
+    bindSharePreviewActions();
     
     // 滾動到預覽區域
     sharePreview.scrollIntoView({ behavior: 'smooth' });
+  }
+}
+
+// 綁定分享預覽的操作按鈕事件
+function bindSharePreviewActions() {
+  // 複製連結按鈕
+  const copyLinkBtn = document.getElementById('copyLinkBtn');
+  if (copyLinkBtn) {
+    // 移除之前的事件監聽器（如果有的話）
+    copyLinkBtn.replaceWith(copyLinkBtn.cloneNode(true));
+    const newCopyLinkBtn = document.getElementById('copyLinkBtn');
+    
+    newCopyLinkBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      copyShareLink();
+    });
+  }
+  
+  // 下載圖片按鈕  
+  const downloadImageBtn = document.getElementById('downloadImageBtn');
+  if (downloadImageBtn) {
+    // 移除之前的事件監聽器（如果有的話）
+    downloadImageBtn.replaceWith(downloadImageBtn.cloneNode(true));
+    const newDownloadImageBtn = document.getElementById('downloadImageBtn');
+    
+    newDownloadImageBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      downloadShareImage();
+    });
   }
 }
 

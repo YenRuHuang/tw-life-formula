@@ -273,18 +273,23 @@ class ShareGenerator {
   async drawDecorations(ctx, dimensions) {
     ctx.save();
     
-    // 繪製圓形裝飾
-    ctx.globalAlpha = 0.1;
+    // 繪製圓形裝飾 - 降低透明度避免干擾文字
+    ctx.globalAlpha = 0.05;
     ctx.fillStyle = this.brandColors.background;
     
-    // 大圓形
+    // 大圓形 - 調整位置避免與內容重疊
     ctx.beginPath();
-    ctx.arc(dimensions.width * 0.8, dimensions.height * 0.2, 150, 0, Math.PI * 2);
+    ctx.arc(dimensions.width * 0.85, dimensions.height * 0.15, 120, 0, Math.PI * 2);
     ctx.fill();
     
-    // 小圓形  
+    // 小圓形 - 調整位置  
     ctx.beginPath();
-    ctx.arc(dimensions.width * 0.1, dimensions.height * 0.8, 80, 0, Math.PI * 2);
+    ctx.arc(dimensions.width * 0.15, dimensions.height * 0.85, 60, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // 中等圓形
+    ctx.beginPath();
+    ctx.arc(dimensions.width * 0.9, dimensions.height * 0.6, 40, 0, Math.PI * 2);
     ctx.fill();
     
     ctx.restore();
@@ -298,18 +303,19 @@ class ShareGenerator {
     
     // 品牌標題
     ctx.fillStyle = this.brandColors.text;
-    ctx.font = this.fonts.subtitle;
+    ctx.font = '18px "Microsoft JhengHei"';
     ctx.textAlign = 'center';
+    ctx.textBaseline = 'top';
     
     const brandTitle = '台灣人生算式 TW Life Formula';
-    ctx.fillText(brandTitle, dimensions.width / 2, 50);
+    ctx.fillText(brandTitle, dimensions.width / 2, 30);
     
-    // 底線
+    // 底線 - 使用更細緻的樣式
     ctx.strokeStyle = this.brandColors.accent;
-    ctx.lineWidth = 3;
+    ctx.lineWidth = 2;
     ctx.beginPath();
-    ctx.moveTo(dimensions.width / 2 - 100, 65);
-    ctx.lineTo(dimensions.width / 2 + 100, 65);
+    ctx.moveTo(dimensions.width / 2 - 120, 55);
+    ctx.lineTo(dimensions.width / 2 + 120, 55);
     ctx.stroke();
     
     ctx.restore();
@@ -322,25 +328,33 @@ class ShareGenerator {
     ctx.save();
     
     const centerX = dimensions.width / 2;
-    const startY = 120;
+    const startY = 100;
+    
+    // 繪製圖示背景圓形
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+    ctx.beginPath();
+    ctx.arc(centerX, startY + 20, 45, 0, Math.PI * 2);
+    ctx.fill();
     
     // 繪製圖示
-    ctx.font = '60px Arial';
+    ctx.font = '50px Arial';
     ctx.textAlign = 'center';
-    ctx.fillText(template.icon, centerX, startY);
+    ctx.textBaseline = 'middle';
+    ctx.fillText(template.icon, centerX, startY + 20);
     
     // 繪製工具標題
     ctx.fillStyle = this.brandColors.text;
-    ctx.font = this.fonts.title;
+    ctx.font = 'bold 24px "Microsoft JhengHei"';
     ctx.textAlign = 'center';
+    ctx.textBaseline = 'top';
     
     const title = customTitle || this.getToolDisplayName(Object.keys(this.templates).find(key => this.templates.get(key) === template));
-    ctx.fillText(title, centerX, startY + 60);
+    ctx.fillText(title, centerX, startY + 75);
     
     // 繪製分類標籤
     ctx.fillStyle = this.brandColors.textLight;
-    ctx.font = this.fonts.small;
-    ctx.fillText(`[ ${template.category} ]`, centerX, startY + 85);
+    ctx.font = '12px "Microsoft JhengHei"';
+    ctx.fillText(`[ ${template.category} ]`, centerX, startY + 105);
     
     ctx.restore();
   }
@@ -352,33 +366,43 @@ class ShareGenerator {
     ctx.save();
     
     const centerX = dimensions.width / 2;
-    const centerY = dimensions.height / 2;
+    const centerY = dimensions.height / 2 - 20;
     
-    // 繪製結果背景圓形
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-    ctx.beginPath();
-    ctx.arc(centerX, centerY, 120, 0, Math.PI * 2);
+    // 繪製結果卡片背景
+    const cardWidth = 300;
+    const cardHeight = 120;
+    const cardX = centerX - cardWidth / 2;
+    const cardY = centerY - cardHeight / 2;
+    
+    // 卡片陰影
+    ctx.shadowColor = 'rgba(0, 0, 0, 0.15)';
+    ctx.shadowBlur = 15;
+    ctx.shadowOffsetY = 8;
+    
+    // 卡片背景
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
+    ctx.roundRect(cardX, cardY, cardWidth, cardHeight, 15);
     ctx.fill();
     
-    // 繪製陰影
-    ctx.shadowColor = 'rgba(0, 0, 0, 0.1)';
-    ctx.shadowBlur = 10;
-    ctx.shadowOffsetY = 5;
+    // 重置陰影
+    ctx.shadowColor = 'transparent';
+    ctx.shadowBlur = 0;
+    ctx.shadowOffsetY = 0;
     
     // 繪製結果數值
     ctx.fillStyle = this.brandColors.text;
-    ctx.font = 'bold 48px "Microsoft JhengHei"';
+    ctx.font = 'bold 36px "Microsoft JhengHei"';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     
     const resultText = `${result.value}${result.unit || ''}`;
-    ctx.fillText(resultText, centerX, centerY - 10);
+    ctx.fillText(resultText, centerX, centerY - 15);
     
     // 繪製等級（如果有的話）
     if (result.level) {
       ctx.fillStyle = this.brandColors.accent;
-      ctx.font = this.fonts.body;
-      ctx.fillText(result.level, centerX, centerY + 25);
+      ctx.font = '16px "Microsoft JhengHei"';
+      ctx.fillText(result.level, centerX, centerY + 15);
     }
     
     ctx.restore();
@@ -391,27 +415,34 @@ class ShareGenerator {
     ctx.save();
     
     const centerX = dimensions.width / 2;
-    const startY = dimensions.height / 2 + 180;
+    const startY = dimensions.height / 2 + 80;
     
     // 繪製描述背景
-    const padding = 20;
-    const maxWidth = dimensions.width - padding * 4;
+    const padding = 40;
+    const maxWidth = dimensions.width - padding * 2;
+    const description = result.description || result.message || '';
     
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
-    ctx.fillRect(padding * 2, startY - 30, maxWidth, 80);
-    
-    // 繪製描述文字
-    ctx.fillStyle = this.brandColors.text;
-    ctx.font = this.fonts.body;
-    ctx.textAlign = 'center';
-    
-    // 處理長文字換行
-    const description = result.description || '';
-    const lines = this.wrapText(ctx, description, maxWidth - 40);
-    
-    lines.forEach((line, index) => {
-      ctx.fillText(line, centerX, startY + index * 25);
-    });
+    if (description) {
+      // 處理長文字換行
+      const lines = this.wrapText(ctx, description, maxWidth - 40);
+      const lineHeight = 22;
+      const backgroundHeight = Math.max(60, lines.length * lineHeight + 20);
+      
+      // 描述背景卡片
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
+      ctx.roundRect(padding, startY - 10, maxWidth, backgroundHeight, 10);
+      ctx.fill();
+      
+      // 繪製描述文字
+      ctx.fillStyle = this.brandColors.text;
+      ctx.font = '14px "Microsoft JhengHei"';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'top';
+      
+      lines.forEach((line, index) => {
+        ctx.fillText(line, centerX, startY + 5 + index * lineHeight);
+      });
+    }
     
     ctx.restore();
   }
@@ -508,27 +539,47 @@ class ShareGenerator {
    * 文字換行處理
    */
   wrapText(ctx, text, maxWidth) {
-    const words = text.split('');
+    if (!text || text.length === 0) return [];
+    
     const lines = [];
     let currentLine = '';
     
-    for (const char of words) {
-      const testLine = currentLine + char;
+    // 按標點符號或長度智能分割
+    const segments = text.match(/[^，。！？；：\s]{1,15}[，。！？；：]?/g) || [text];
+    
+    for (const segment of segments) {
+      const testLine = currentLine + segment;
       const metrics = ctx.measureText(testLine);
       
       if (metrics.width > maxWidth && currentLine !== '') {
-        lines.push(currentLine);
-        currentLine = char;
+        lines.push(currentLine.trim());
+        currentLine = segment;
       } else {
         currentLine = testLine;
       }
+      
+      // 如果單個片段就超過最大寬度，強制換行
+      if (ctx.measureText(currentLine).width > maxWidth) {
+        // 按字符強制分割
+        let tempLine = '';
+        for (const char of currentLine) {
+          const testChar = tempLine + char;
+          if (ctx.measureText(testChar).width > maxWidth && tempLine !== '') {
+            lines.push(tempLine);
+            tempLine = char;
+          } else {
+            tempLine = testChar;
+          }
+        }
+        currentLine = tempLine;
+      }
     }
     
-    if (currentLine) {
-      lines.push(currentLine);
+    if (currentLine.trim()) {
+      lines.push(currentLine.trim());
     }
     
-    return lines.slice(0, 3); // 最多3行
+    return lines.slice(0, 2); // 最多2行避免擁擠
   }
 
   /**

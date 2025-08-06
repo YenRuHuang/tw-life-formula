@@ -88,21 +88,29 @@ router.post('/:toolId/share/image', async (req, res, next) => {
     }
 
     // 生成分享圖片
-    const shareImage = await shareGenerator.generateShareImage(toolId, result, platform);
+    const shareImage = await shareGenerator.generateShareImage(toolId, result, { 
+      platform, 
+      userId: req.session.userId 
+    });
 
     // 記錄分享統計
     await shareGenerator.recordShare(toolId, platform, req.session.userId, 'generate');
 
     res.json({
       success: true,
-      data: shareImage
+      data: {
+        imagePath: shareImage.filepath,
+        imageUrl: shareImage.url,
+        filename: shareImage.filename,
+        dimensions: shareImage.dimensions
+      }
     });
 
     logger.info('分享圖片生成成功', {
       toolId,
       platform,
       userId: req.session.userId,
-      imagePath: shareImage.imagePath
+      imagePath: shareImage.filepath
     });
   } catch (error) {
     next(error);
