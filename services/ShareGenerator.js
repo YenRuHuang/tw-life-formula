@@ -301,21 +301,21 @@ class ShareGenerator {
   async drawBrandHeader(ctx, dimensions) {
     ctx.save();
     
-    // 品牌標題
+    // 品牌標題 - 純英文避免亂碼
     ctx.fillStyle = this.brandColors.text;
     ctx.font = 'bold 18px Arial, sans-serif';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'top';
     
-    const brandTitle = '台灣人生算式 TW Life Formula';
+    const brandTitle = 'TW Life Formula';
     ctx.fillText(brandTitle, dimensions.width / 2, 30);
     
     // 底線 - 使用更細緻的樣式
     ctx.strokeStyle = this.brandColors.accent;
     ctx.lineWidth = 2;
     ctx.beginPath();
-    ctx.moveTo(dimensions.width / 2 - 120, 55);
-    ctx.lineTo(dimensions.width / 2 + 120, 55);
+    ctx.moveTo(dimensions.width / 2 - 80, 55);
+    ctx.lineTo(dimensions.width / 2 + 80, 55);
     ctx.stroke();
     
     ctx.restore();
@@ -348,13 +348,13 @@ class ShareGenerator {
     ctx.textAlign = 'center';
     ctx.textBaseline = 'top';
     
-    const title = customTitle || this.getToolDisplayName(Object.keys(this.templates).find(key => this.templates.get(key) === template));
+    const title = customTitle || this.getToolDisplayNameEN(Object.keys(this.templates).find(key => this.templates.get(key) === template));
     ctx.fillText(title, centerX, startY + 75);
     
-    // 繪製分類標籤
+    // 繪製分類標籤 - 改為英文
     ctx.fillStyle = this.brandColors.textLight;
     ctx.font = '12px Arial, sans-serif';
-    ctx.fillText(`[ ${template.category} ]`, centerX, startY + 105);
+    ctx.fillText(`[ ${this.getCategoryEN(template.category)} ]`, centerX, startY + 105);
     
     ctx.restore();
   }
@@ -458,11 +458,11 @@ class ShareGenerator {
     const startY = dimensions.height - 180;
     const centerX = dimensions.width / 2;
     
-    // 標題
+    // 標題 - 改為英文
     ctx.fillStyle = this.brandColors.textLight;
     ctx.font = this.fonts.small;
     ctx.textAlign = 'center';
-    ctx.fillText('震撼比較', centerX, startY - 10);
+    ctx.fillText('Comparison', centerX, startY - 10);
     
     // 比較項目
     comparisons.slice(0, 2).forEach((comparison, index) => {
@@ -503,11 +503,11 @@ class ShareGenerator {
       
       ctx.drawImage(qrImage, qrX, qrY, qrSize, qrSize);
       
-      // QR Code 說明文字
+      // QR Code 說明文字 - 改為英文
       ctx.fillStyle = this.brandColors.textLight;
       ctx.font = this.fonts.small;
       ctx.textAlign = 'center';
-      ctx.fillText('掃碼測試', qrX + qrSize / 2, qrY + qrSize + 15);
+      ctx.fillText('Scan Me', qrX + qrSize / 2, qrY + qrSize + 15);
       
     } catch (error) {
       logger.error('QR Code 生成失敗:', error);
@@ -528,9 +528,9 @@ class ShareGenerator {
     ctx.textAlign = 'left';
     ctx.fillText('twlifeformula.zeabur.app', 20, footerY);
     
-    // 右側：分類標籤
+    // 右側：分類標籤 - 改為英文
     ctx.textAlign = 'right';
-    ctx.fillText(`#${category} #台灣人生算式`, dimensions.width - 20, footerY);
+    ctx.fillText(`#${this.getCategoryEN(category)} #TWLifeFormula`, dimensions.width - 20, footerY);
     
     ctx.restore();
   }
@@ -580,6 +580,50 @@ class ShareGenerator {
     }
     
     return lines.slice(0, 2); // 最多2行避免擁擠
+  }
+
+  /**
+   * 獲取工具顯示名稱（英文版）
+   */
+  getToolDisplayNameEN(toolType) {
+    const toolNamesEN = {
+      'moonlight-calculator': 'Moonlight Calculator',
+      'noodle-survival': 'Noodle Survival',
+      'breakup-cost': 'Breakup Cost',
+      'escape-taipei': 'Escape Taipei',
+      'phone-lifespan': 'Phone Lifespan',
+      'car-vs-uber': 'Car vs Uber',
+      'birthday-collision': 'Birthday Collision',
+      'housing-index': 'Housing Index',
+      'lazy-index-test': 'Lazy Index Test',
+      'gaming-addiction-calculator': 'Gaming Addiction',
+      'aging-simulator': 'Aging Simulator',
+      'food-expense-shocker': 'Food Expense Shocker'
+    };
+
+    return toolNamesEN[toolType] || toolType;
+  }
+
+  /**
+   * 獲取分類英文名稱
+   */
+  getCategoryEN(category) {
+    const categoryEN = {
+      '理財計算': 'Finance',
+      '生存計算': 'Survival',
+      '感情計算': 'Love',
+      '生活計算': 'Life',
+      '科技計算': 'Tech',
+      '交通計算': 'Transport',
+      '趣味計算': 'Fun',
+      '居住計算': 'Housing',
+      '個性測驗': 'Personality',
+      '生活測驗': 'Lifestyle',
+      '時間測驗': 'Time',
+      '飲食測驗': 'Food'
+    };
+
+    return categoryEN[category] || category;
   }
 
   /**
