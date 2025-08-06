@@ -27,12 +27,12 @@ class ShareGenerator {
       cardBg: '#FFFFFF'      // 卡片背景
     };
     
-    // 字體配置
+    // 字體配置 - 使用 Canvas 內建字體避免中文亂碼
     this.fonts = {
-      title: '28px "Microsoft JhengHei", "Noto Sans TC", sans-serif',
-      subtitle: '20px "Microsoft JhengHei", "Noto Sans TC", sans-serif',
-      body: '16px "Microsoft JhengHei", "Noto Sans TC", sans-serif',
-      small: '14px "Microsoft JhengHei", "Noto Sans TC", sans-serif'
+      title: 'bold 28px Arial, sans-serif',
+      subtitle: 'bold 20px Arial, sans-serif', 
+      body: '16px Arial, sans-serif',
+      small: '14px Arial, sans-serif'
     };
     
     // Canvas 尺寸配置
@@ -303,7 +303,7 @@ class ShareGenerator {
     
     // 品牌標題
     ctx.fillStyle = this.brandColors.text;
-    ctx.font = '18px "Microsoft JhengHei"';
+    ctx.font = 'bold 18px Arial, sans-serif';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'top';
     
@@ -344,7 +344,7 @@ class ShareGenerator {
     
     // 繪製工具標題
     ctx.fillStyle = this.brandColors.text;
-    ctx.font = 'bold 24px "Microsoft JhengHei"';
+    ctx.font = 'bold 24px Arial, sans-serif';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'top';
     
@@ -353,7 +353,7 @@ class ShareGenerator {
     
     // 繪製分類標籤
     ctx.fillStyle = this.brandColors.textLight;
-    ctx.font = '12px "Microsoft JhengHei"';
+    ctx.font = '12px Arial, sans-serif';
     ctx.fillText(`[ ${template.category} ]`, centerX, startY + 105);
     
     ctx.restore();
@@ -391,7 +391,7 @@ class ShareGenerator {
     
     // 繪製結果數值
     ctx.fillStyle = this.brandColors.text;
-    ctx.font = 'bold 36px "Microsoft JhengHei"';
+    ctx.font = 'bold 36px Arial, sans-serif';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     
@@ -401,7 +401,7 @@ class ShareGenerator {
     // 繪製等級（如果有的話）
     if (result.level) {
       ctx.fillStyle = this.brandColors.accent;
-      ctx.font = '16px "Microsoft JhengHei"';
+      ctx.font = 'bold 16px Arial, sans-serif';
       ctx.fillText(result.level, centerX, centerY + 15);
     }
     
@@ -435,7 +435,7 @@ class ShareGenerator {
       
       // 繪製描述文字
       ctx.fillStyle = this.brandColors.text;
-      ctx.font = '14px "Microsoft JhengHei"';
+      ctx.font = '14px Arial, sans-serif';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'top';
       
