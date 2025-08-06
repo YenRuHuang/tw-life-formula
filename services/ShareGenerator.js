@@ -402,7 +402,9 @@ class ShareGenerator {
     if (result.level) {
       ctx.fillStyle = this.brandColors.accent;
       ctx.font = 'bold 16px Arial, sans-serif';
-      ctx.fillText(result.level, centerX, centerY + 15);
+      // 清理等級文字中的中文
+      const cleanLevel = this.sanitizeTextForCanvas(result.level);
+      ctx.fillText(cleanLevel, centerX, centerY + 15);
     }
     
     ctx.restore();
@@ -420,7 +422,10 @@ class ShareGenerator {
     // 繪製描述背景
     const padding = 40;
     const maxWidth = dimensions.width - padding * 2;
-    const description = result.description || result.message || '';
+    let description = result.description || result.message || '';
+    
+    // 過濾中文或轉換為英文，避免亂碼
+    description = this.sanitizeTextForCanvas(description);
     
     if (description) {
       // 處理長文字換行
@@ -464,11 +469,13 @@ class ShareGenerator {
     ctx.textAlign = 'center';
     ctx.fillText('Comparison', centerX, startY - 10);
     
-    // 比較項目
+    // 比較項目 - 清理中文內容
     comparisons.slice(0, 2).forEach((comparison, index) => {
       ctx.fillStyle = this.brandColors.text;
       ctx.font = this.fonts.small;
-      ctx.fillText(`• ${comparison}`, centerX, startY + 15 + index * 20);
+      // 清理比較內容中的中文
+      const cleanComparison = this.sanitizeTextForCanvas(comparison);
+      ctx.fillText(`• ${cleanComparison}`, centerX, startY + 15 + index * 20);
     });
     
     ctx.restore();
@@ -580,6 +587,91 @@ class ShareGenerator {
     }
     
     return lines.slice(0, 2); // 最多2行避免擁擠
+  }
+
+  /**
+   * 清理文字以適用於 Canvas 顯示，避免中文亂碼
+   */
+  sanitizeTextForCanvas(text) {
+    if (!text || typeof text !== 'string') return '';
+    
+    // 常見中文詞彙轉換對照表
+    const chineseToEnglishMap = {
+      // 數字和單位
+      '萬': 'K',
+      '億': 'M',
+      '元': ' NT$',
+      '塊': ' NT$',
+      '年': ' years',
+      '個月': ' months',
+      '天': ' days',
+      '小時': ' hours',
+      '分鐘': ' minutes',
+      
+      // 常見形容詞
+      '非常': 'very',
+      '極度': 'extremely', 
+      '超級': 'super',
+      '完全': 'totally',
+      '絕對': 'absolutely',
+      '相當': 'quite',
+      
+      // 等級描述
+      '低': 'Low',
+      '中等': 'Medium',
+      '高': 'High', 
+      '極高': 'Very High',
+      '超高': 'Extremely High',
+      
+      // 狀態描述
+      '健康': 'Healthy',
+      '危險': 'Dangerous',
+      '安全': 'Safe',
+      '理想': 'Ideal',
+      '糟糕': 'Poor',
+      '良好': 'Good',
+      '優秀': 'Excellent',
+      
+      // 動作詞
+      '可以': 'can',
+      '應該': 'should',
+      '需要': 'need',
+      '建議': 'suggest',
+      '推薦': 'recommend'
+    };
+    
+    let result = text;
+    
+    // 執行中英轉換
+    for (const [chinese, english] of Object.entries(chineseToEnglishMap)) {
+      const regex = new RegExp(chinese, 'g');
+      result = result.replace(regex, english);
+    }
+    
+    // 移除剩餘的中文字符，用簡單描述替代
+    result = result.replace(/[\u4e00-\u9fff]+/g, (match) => {
+      // 如果是數字相關的中文，保留數字部分
+      const numberMatch = match.match(/\d+/);
+      if (numberMatch) {
+        return numberMatch[0];
+      }
+      
+      // 根據長度給予簡單的英文描述
+      if (match.length <= 2) return '';
+      if (match.length <= 5) return 'Good';
+      if (match.length <= 10) return 'Very interesting result';
+      return 'Amazing calculation result';
+    });
+    
+    // 清理多餘的空格和標點
+    result = result.replace(/\s+/g, ' ').trim();
+    
+    // 如果結果太空，給個預設值
+    if (!result || result.length < 3) {
+      return 'Result calculated successfully';
+    }
+    
+    return result;
   }
 
   /**
